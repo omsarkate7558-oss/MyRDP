@@ -1,4 +1,4 @@
-name: Free RDP (Auto-Restart + Fixed Password)
+name: RDP
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 jobs:
   rdp:
     runs-on: windows-latest
-    timeout-minutes: 360   # Max GitHub limit (6 hours)
+    timeout-minutes: 360
 
     steps:
       - name: Enable RDP Access
@@ -69,7 +69,18 @@ jobs:
 
       - name: Keep Session Alive
         run: |
-          while ($true) {
+          for ($i=0; $i -lt 70; $i++) {
               Write-Host "[$(Get-Date)] RDP Active..."
               Start-Sleep -Seconds 300
           }
+
+      - name: Auto Restart Workflow
+        if: always()
+        run: |
+          $headers = @{
+            "Authorization" = "token ${{ secrets.GH_TOKEN }}"
+            "Accept" = "application/vnd.github.v3+json"
+          }
+          $body = '{"ref":"main"}'
+          Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/actions/workflows/rdp.yml/dispatches" -Headers $headers -Method POST -Body $body
+          Write-Host "♻️ Auto Restart Triggered Successfully!"
