@@ -82,5 +82,5 @@ jobs:
             "Accept" = "application/vnd.github.v3+json"
           }
           $body = '{"ref":"main"}'
-          Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/actions/workflows/rdp.yml/dispatches" -Headers $headers -Method POST -Body $body
+          Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/actions/workflows/main.yml/dispatches" -Headers $headers -Method POST -Body $body
           Write-Host "♻️ Auto Restart Triggered Successfully!"
